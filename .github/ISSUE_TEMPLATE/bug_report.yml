@@ -1,0 +1,33 @@
+name: Bug report
+description: Something is broken
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: open **Activity** in your dashboard. Failed jobs print
+        the real error there, and it is usually the answer.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got instead.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where it runs
+      placeholder: Vercel + Supabase / VPS / local
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error text
+      description: From Activity, or Vercel → Deployments → Runtime Logs. Redact any API keys.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: Commit or release

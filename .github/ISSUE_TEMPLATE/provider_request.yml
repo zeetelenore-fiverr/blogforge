@@ -1,0 +1,35 @@
+name: Add a free AI provider
+description: A free tier BlogForge should support
+labels: [provider]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Service name
+    validations:
+      required: true
+  - type: input
+    id: signup
+    attributes:
+      label: Where to get a key
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What it does
+      options: [Text generation, Image generation, Keyword research, SEO data]
+    validations:
+      required: true
+  - type: input
+    id: api
+    attributes:
+      label: API style
+      placeholder: OpenAI-compatible / custom — link the docs
+  - type: textarea
+    id: tier
+    attributes:
+      label: What the free tier actually allows
+      description: Requests per day, card required, expiry. Be specific — this goes in the catalog.
+    validations:
+      required: true

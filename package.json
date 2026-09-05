@@ -1,0 +1,48 @@
+{
+  "name": "blogforge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free AI blog automation SaaS — research keywords, generate SEO articles + images, schedule, publish, and self-heal indexing issues.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "setup": "node scripts/setup.mjs",
+    "worker": "node scripts/worker.mjs",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.17",
+    "@tiptap/extension-image": "^2.27.3",
+    "@tiptap/extension-link": "^2.27.3",
+    "@tiptap/extension-placeholder": "^2.27.3",
+    "@tiptap/extension-table": "^2.27.3",
+    "@tiptap/extension-table-cell": "^2.27.3",
+    "@tiptap/extension-table-header": "^2.27.3",
+    "@tiptap/extension-table-row": "^2.27.3",
+    "@tiptap/pm": "^2.27.3",
+    "@tiptap/react": "^2.27.3",
+    "@tiptap/starter-kit": "^2.27.3",
+    "drizzle-orm": "^0.44.2",
+    "marked": "^15.0.12",
+    "next": "^15.3.4",
+    "postgres": "^3.4.9",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanitize-html": "^2.17.0",
+    "tiptap-markdown": "^0.8.10",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^22.15.32",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/sanitize-html": "^2.16.0",
+    "drizzle-kit": "^0.31.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  }
+}

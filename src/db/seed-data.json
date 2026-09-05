@@ -1,0 +1,52 @@
+{
+  "providers": [
+    { "kind": "image", "providerId": "pollinations", "label": "Pollinations (free, no key)", "model": "flux", "priority": 10 },
+    { "kind": "keyword", "providerId": "ai-keywords", "label": "AI keyword research", "model": null, "priority": 5 },
+    { "kind": "keyword", "providerId": "google-suggest", "label": "Google Autocomplete (free)", "model": null, "priority": 10 },
+    { "kind": "keyword", "providerId": "datamuse", "label": "Datamuse (free)", "model": null, "priority": 20 },
+    { "kind": "seo", "providerId": "builtin-seo", "label": "Built-in on-page analyzer", "model": null, "priority": 10 },
+    { "kind": "seo", "providerId": "pagespeed", "label": "PageSpeed Insights (keyless)", "model": null, "priority": 20 }
+  ],
+  "categories": [
+    { "name": "Guides", "slug": "guides", "description": "Step-by-step walkthroughs that get you to a result." },
+    { "name": "Comparisons", "slug": "comparisons", "description": "Side-by-side breakdowns to help you choose." },
+    { "name": "Explainers", "slug": "explainers", "description": "Plain-English answers to the questions people actually ask." }
+  ],
+  "pages": [
+    {
+      "slug": "about",
+      "title": "About Us",
+      "showInHeader": 1,
+      "sortOrder": 1,
+      "contentMd": "## Who we are\n\nWe publish practical, carefully checked guides on the topics our readers search for most. Every article is written to answer one specific question properly, then reviewed before it goes live.\n\n## How we work\n\nOur drafts are produced with AI assistance and then edited by a human before publication. We say so openly because you deserve to know how the words in front of you were made. What we do not do is publish anything we have not read.\n\n## What we will not do\n\nWe do not publish sponsored content disguised as editorial, we do not invent statistics, and we do not recommend something we would not use ourselves.\n\n## Get in touch\n\nCorrections, questions and tip-offs are all welcome — see our contact page."
+    },
+    {
+      "slug": "contact",
+      "title": "Contact",
+      "showInHeader": 1,
+      "sortOrder": 2,
+      "contentMd": "## Contact us\n\nWe read everything that comes in, and we reply to most of it within two working days.\n\n**Editorial and corrections** — if something on this site is wrong, tell us and we will fix it and note the correction.\n\n**Advertising and partnerships** — we are open to conversations, and any commercial relationship is disclosed on the page it affects.\n\n**Email:** hello@example.com\n\nPlease replace this address in Settings before launching your site."
+    },
+    {
+      "slug": "privacy-policy",
+      "title": "Privacy Policy",
+      "showInHeader": 0,
+      "sortOrder": 3,
+      "contentMd": "_Last updated: on publication._\n\n## What we collect\n\nWe collect the minimum needed to run this website: standard server logs, and anonymised analytics if analytics are enabled.\n\n## Cookies\n\nThis site may use cookies for analytics and, where advertising is enabled, for ad personalisation.\n\n## Third-party advertising\n\nIf Google AdSense is enabled on this site, Google and its partners may use cookies to serve ads based on your prior visits to this and other websites. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and/or other sites on the internet.\n\nYou may opt out of personalised advertising by visiting [Google Ads Settings](https://www.google.com/settings/ads). You can also opt out of a third-party vendor's use of cookies for personalised advertising by visiting [aboutads.info](https://www.aboutads.info/choices/).\n\n## Analytics\n\nWhere analytics are enabled we use them only in aggregate, to understand which articles are useful.\n\n## Your rights\n\nYou may request access to, correction of, or deletion of any personal data we hold about you by contacting us.\n\n## Changes\n\nWe will update this page whenever our practices change, and the date at the top will reflect that.\n\n> Replace this template with a policy reviewed for your jurisdiction before you launch."
+    },
+    {
+      "slug": "terms",
+      "title": "Terms of Use",
+      "showInHeader": 0,
+      "sortOrder": 4,
+      "contentMd": "## Using this site\n\nYou are welcome to read, link to and quote our articles with attribution. You may not republish them wholesale.\n\n## Accuracy\n\nWe work hard to be accurate and we correct mistakes when we find them, but content is provided \"as is\" without warranty. Verify anything you are going to rely on.\n\n## Not professional advice\n\nNothing here is legal, medical or financial advice. Talk to a qualified professional about your specific situation.\n\n## Liability\n\nTo the extent permitted by law, we are not liable for losses arising from your use of this site.\n\n## Contact\n\nQuestions about these terms? Use the contact page."
+    },
+    {
+      "slug": "editorial-policy",
+      "title": "Editorial Policy",
+      "showInHeader": 0,
+      "sortOrder": 5,
+      "contentMd": "## Our standards\n\n**Every article answers a real question.** We start from what people actually search for, not from what is easy to write.\n\n**AI assistance is disclosed.** Drafts are generated with AI and reviewed by a person before publication. We label this on every article.\n\n**We correct errors in public.** When we get something wrong we fix it and say what changed.\n\n**We separate editorial and commercial.** Any sponsored or affiliate relationship is disclosed on the page where it applies.\n\n## How we choose topics\n\nWe research the questions people ask, group them into topics we can cover properly, and publish on a schedule rather than in bursts.\n\n## Sources\n\nWhere a claim depends on a source, we link to it. We do not cite sources we have not read."
+    }
+  ]
+}

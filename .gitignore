@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+data/
+
+public/uploads
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# local tooling
+.claude/
+.vercel
