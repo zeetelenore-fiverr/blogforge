@@ -324,6 +324,17 @@ src/
 
 ---
 
+## Forking it
+
+After you publish your own copy, point the deploy button and help links at it:
+
+```bash
+npm run set-repo -- yourname/blogforge
+```
+
+Then commit. Until you do, the Deploy button on your README sends people to a
+repository that does not exist.
+
 ## Contributing
 
 Issues and pull requests are welcome — see **[CONTRIBUTING.md](CONTRIBUTING.md)**.

@@ -2,7 +2,7 @@
   "name": "blogforge",
   "version": "1.0.0",
   "private": true,
-  "description": "Free AI blog automation SaaS — research keywords, generate SEO articles + images, schedule, publish, and self-heal indexing issues.",
+  "description": "Free AI blog automation SaaS — research keywords, generate SEO articles and images, schedule, publish, screen against AdSense policy, and self-heal indexing.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,7 +11,8 @@
     "db:studio": "drizzle-kit studio",
     "setup": "node scripts/setup.mjs",
     "worker": "node scripts/worker.mjs",
-    "lint": "next lint"
+    "lint": "next lint",
+    "set-repo": "node scripts/set-repo.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.17",
@@ -44,5 +45,16 @@
     "drizzle-kit": "^0.31.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3"
-  }
+  },
+  "license": "MIT",
+  "keywords": [
+    "blog",
+    "automation",
+    "seo",
+    "ai",
+    "nextjs",
+    "adsense",
+    "self-hosted",
+    "supabase"
+  ]
 }
