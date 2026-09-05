@@ -1,4 +1,5 @@
 import 'server-only';
+import fs from 'node:fs';
 import path from 'node:path';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
@@ -58,10 +59,29 @@ function create(): Db {
   const { drizzle } = require('drizzle-orm/pglite') as typeof import('drizzle-orm/pglite');
 
   const dir = raw.replace(/^file:/, '') || path.join(process.cwd(), 'data', 'pg');
-  const client = new PGlite(path.resolve(process.cwd(), dir));
+  const resolved = path.resolve(process.cwd(), dir);
+  // PGlite's own mkdir is not recursive, so a fresh clone with no ./data would
+  // fail before it ever opened the database.
+  fs.mkdirSync(resolved, { recursive: true });
+  const client = new PGlite(resolved);
 
   g.__bf_exec = async (sqlText: string) => {
-    await client.exec(sqlText);
+    try {
+      await client.exec(sqlText);
+    } catch (err) {
+      // PGlite is single-process. Two dev servers, or a script poking the same
+      // directory, corrupt it and surface as an opaque WASM abort.
+      if (String(err).includes('Aborted')) {
+        throw new Error(
+          `The local database at ${dir} could not be opened. PGlite allows one ` +
+            'process at a time — check that a second "npm run dev" is not ' +
+            `running. If nothing else is using it, delete ${dir} and restart; ` +
+            'the schema rebuilds itself. Set DATABASE_URL to use a real ' +
+            'Postgres server instead.',
+        );
+      }
+      throw err;
+    }
   };
   return drizzle(client, { schema }) as unknown as Db;
 }
