@@ -109,22 +109,48 @@ export async function ensureSchema(): Promise<void> {
 
   if ((await builtVersion(db)) === SCHEMA_VERSION) return;
 
-  await db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(${BUILD_LOCK})`);
+  // Three attempts, because losing the race to another instance is a normal
+  // outcome, not a failure: the winner builds, we re-check and find it done.
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await db.transaction(async (tx) => {
+        // Nothing in a boot path may block indefinitely. Without these, a lock
+        // held by a crashed or orphaned session makes every request hang until
+        // the platform kills it -- observed on Vercel as a clean 300s timeout on
+        // every page while route handlers, which had already found the schema
+        // built, kept serving normally.
+        await tx.execute(sql`SET LOCAL lock_timeout = '10s'`);
+        await tx.execute(sql`SET LOCAL statement_timeout = '60s'`);
+        await tx.execute(sql`SELECT pg_advisory_xact_lock(${BUILD_LOCK})`);
 
-    // Whoever queued behind the winner arrives here after it committed.
-    if ((await builtVersion(tx)) === SCHEMA_VERSION) return;
+        // Whoever queued behind the winner arrives here after it committed.
+        if ((await builtVersion(tx)) === SCHEMA_VERSION) return;
 
-    for (const statement of [...statements(SCHEMA_SQL), ...statements(ADDED_COLUMNS)]) {
-      await tx.execute(sql.raw(statement));
+        for (const statement of [...statements(SCHEMA_SQL), ...statements(ADDED_COLUMNS)]) {
+          await tx.execute(sql.raw(statement));
+        }
+
+        await seedDefaults(tx);
+        const { settings } = await import('./index');
+        await tx
+          .insert(settings)
+          .values({ key: SCHEMA_KEY, value: SCHEMA_VERSION })
+          .onConflictDoUpdate({ target: settings.key, set: { value: SCHEMA_VERSION } });
+      });
+      return;
+    } catch (err) {
+      // Someone else may have finished while we were timing out on the lock.
+      if ((await builtVersion(db)) === SCHEMA_VERSION) return;
+      if (attempt === 3) {
+        throw new Error(
+          `Could not build the database schema after ${attempt} attempts: ${
+            err instanceof Error ? err.message : String(err)
+          }. If this says "lock timeout", another process is stuck mid-build -- ` +
+            'restarting the database server clears it.',
+        );
+      }
     }
-
-    await seedDefaults(tx);
-    await tx
-      .insert((await import('./index')).settings)
-      .values({ key: SCHEMA_KEY, value: SCHEMA_VERSION })
-      .onConflictDoUpdate({ target: (await import('./index')).settings.key, set: { value: SCHEMA_VERSION } });
-  });
+  }
 }
 
 /**
