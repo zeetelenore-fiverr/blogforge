@@ -105,8 +105,8 @@ needed.
    It takes a minute or two to finish setting up.
 4. When it is ready, find the **Connect** button near the top of the page and
    click it.
-5. You will see several connection strings. Choose the one labelled **Session
-   pooler**. It looks like this:
+5. You will see several connection strings. Choose the one labelled
+   **Transaction pooler**. It looks like this:
 
    ```
    postgresql://postgres.abcdefgh:[YOUR-PASSWORD]@aws-0-eu-west-2.pooler.supabase.com:6543/postgres
@@ -116,9 +116,9 @@ needed.
    with the password you chose in step 2.
    → This finished line is **#1** on your worksheet.
 
-> **Pick the "Session pooler" one specifically.** There are other options on
-> that screen. The pooler is the one built for websites like this; the others
-> will run out of connections and the site will start erroring.
+> **Pick the "Transaction pooler" one specifically** — the address ends in
+> `:6543`. The other options on that screen end in `:5432`; they will run out
+> of connections and the site will start erroring.
 
 **You do not need to set anything up inside the database.** No tables, no
 columns, no SQL. The blog builds all of that by itself the first time it runs.
@@ -343,8 +343,8 @@ there is nothing to do.
 **The website shows an error page after deploying**
 Almost always the database line. Go to Vercel → Settings → Environment Variables
 and check `DATABASE_URL`: it must start with `postgresql://`, must have your real
-password in place of `[YOUR-PASSWORD]`, and must be the **Session pooler** one
-with `6543` in it. Fix it, then redeploy (Part 6, steps 4-5).
+password in place of `[YOUR-PASSWORD]`, and must be the **Transaction pooler**
+one with `6543` in it. Fix it, then redeploy (Part 6, steps 4-5).
 
 **The site worked and now shows an error**
 Supabase puts free projects to sleep after a week with no visitors. Open your

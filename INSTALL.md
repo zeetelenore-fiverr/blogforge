@@ -67,8 +67,8 @@ file** and drag in the contents of the unzipped folder. Do **not** upload the
    **New project**.
 2. Name it `blogforge`, set a database password (save it), and pick the region
    closest to your readers. Creating the project takes a minute or two.
-3. Open **Connect** (top of the project page) and choose the **Session pooler**
-   connection string. It looks like:
+3. Open **Connect** (top of the project page) and choose the **Transaction
+   pooler** connection string. It looks like:
 
    ```
    postgresql://postgres.abcdefgh:[YOUR-PASSWORD]@aws-0-eu-west-2.pooler.supabase.com:6543/postgres
@@ -77,9 +77,11 @@ file** and drag in the contents of the unzipped folder. Do **not** upload the
 4. Replace `[YOUR-PASSWORD]` with the password from step 2 and copy the whole
    line somewhere safe.
 
-> **Use the pooler, not the direct connection.** Serverless functions open a new
-> connection per invocation; the direct `:5432` string runs out of connections
-> quickly. The pooled `:6543` one is built for this.
+> **Take the Transaction pooler, not Session pooler or Direct connection.**
+> Serverless functions open a new connection per invocation, and both of the
+> others use port `:5432` and run out of connections quickly. The transaction
+> pooler on `:6543` is built for exactly this, and BlogForge is configured to
+> match it.
 
 You do not need to create any tables, run any SQL, or touch the schema editor.
 BlogForge builds its own database structure the first time the site is opened.
@@ -290,8 +292,8 @@ you replaced `[YOUR-PASSWORD]` with the real password, and that you used the
 **Deployments → your deployment → Runtime Logs** for the actual message.
 
 **"too many connections" or "remaining connection slots are reserved"**
-You are on the direct Supabase connection. Switch `DATABASE_URL` to the Session
-pooler string on port 6543 and redeploy.
+You are on a `:5432` connection — either Direct or Session pooler. Switch
+`DATABASE_URL` to the Transaction pooler string on port 6543 and redeploy.
 
 **The site was fine and now errors**
 Supabase pauses free projects after a week with no activity. Open the Supabase

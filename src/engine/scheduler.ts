@@ -1,5 +1,5 @@
 import 'server-only';
-import { and, asc, eq, inArray, lte, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, lte, sql } from 'drizzle-orm';
 import { db, campaigns, jobs, posts, keywords, indexStatus, type Campaign, type Job } from '@/db';
 import { json } from '@/lib/util';
 import { logInfo, logWarn, logError, errMessage } from '@/lib/log';
@@ -19,7 +19,13 @@ export type TickResult = {
   messages: string[];
 };
 
-/** Serialise ticks so an inline scheduler and an external cron cannot overlap. */
+/**
+ * Serialise ticks *within one process*, so an inline scheduler and an external
+ * cron hitting the same server do not overlap. It is deliberately not the only
+ * guard: on serverless every cron invocation is its own process and never sees
+ * this flag, so publishing and campaign runs below claim their rows in the
+ * database instead.
+ */
 const lock = globalThis as unknown as { __bf_tick?: boolean };
 
 export async function tick(opts: { maxJobs?: number } = {}): Promise<TickResult> {
@@ -55,16 +61,16 @@ export async function tick(opts: { maxJobs?: number } = {}): Promise<TickResult>
 /* ------------------------------------------------------------ publishing */
 
 async function publishDue(): Promise<number> {
+  // One statement, not a select followed by an update: two overlapping ticks
+  // would otherwise both see the same scheduled rows, both flip them, and both
+  // ping IndexNow — resetting publishedAt on the way through. RETURNING hands
+  // back only the rows this call actually changed.
   const due = await db
-    .select()
-    .from(posts)
-    .where(and(eq(posts.status, 'scheduled'), lte(posts.scheduledFor, new Date())));
-  if (!due.length) return 0;
-
-  await db
     .update(posts)
     .set({ status: 'published', publishedAt: new Date(), updatedAt: new Date() })
-    .where(inArray(posts.id, due.map((p) => p.id)));
+    .where(and(eq(posts.status, 'scheduled'), lte(posts.scheduledFor, new Date())))
+    .returning({ id: posts.id, slug: posts.slug });
+  if (!due.length) return 0;
 
   const s = await getSettings();
   const base = (s['site.url'] || '').replace(/\/+$/, '');
@@ -87,17 +93,40 @@ async function enqueueDueCampaigns(): Promise<number> {
   let count = 0;
   for (const c of due) {
     if (c.maxArticles > 0 && c.generatedCount >= c.maxArticles) {
-      await db.update(campaigns).set({ status: 'completed' }).where(eq(campaigns.id, c.id));
-      await logInfo('scheduler', `Campaign "${c.name}" finished its target of ${c.maxArticles} articles`);
+      const [finished] = await db
+        .update(campaigns)
+        .set({ status: 'completed' })
+        .where(and(eq(campaigns.id, c.id), eq(campaigns.status, 'active')))
+        .returning({ id: campaigns.id });
+      if (finished) {
+        await logInfo('scheduler', `Campaign "${c.name}" finished its target of ${c.maxArticles} articles`);
+      }
       continue;
     }
+
+    // Claim the slot before queueing anything. Overlapping ticks are normal —
+    // Vercel Cron and an external cron service can both be pointed at
+    // /api/cron/tick, and each serverless invocation is a separate process — and
+    // both would read the same due campaign and queue the run twice, doubling
+    // the articles and the free-tier spend. Moving nextRunAt first, conditional
+    // on it still holding the value we read, lets exactly one tick through.
+    const dueAt = c.nextRunAt;
+    const [claimed] = await db
+      .update(campaigns)
+      .set({ lastRunAt: new Date(), nextRunAt: nextRun(c) })
+      .where(
+        and(
+          eq(campaigns.id, c.id),
+          eq(campaigns.status, 'active'),
+          dueAt ? eq(campaigns.nextRunAt, dueAt) : isNull(campaigns.nextRunAt),
+        ),
+      )
+      .returning({ id: campaigns.id });
+    if (!claimed) continue;
+
     for (let i = 0; i < Math.max(1, c.articlesPerRun); i++) {
       await enqueue('generate', { campaignId: c.id }, { campaignId: c.id });
     }
-    await db
-      .update(campaigns)
-      .set({ lastRunAt: new Date(), nextRunAt: nextRun(c) })
-      .where(eq(campaigns.id, c.id));
     count++;
   }
   return count;

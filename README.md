@@ -284,7 +284,7 @@ ephemeral filesystem, and you need to handle both:
 
 1. **Database** — the local Postgres directory would be wiped between
    invocations. Point `DATABASE_URL` at a free [Supabase](https://supabase.com)
-   project, using its **pooled** connection string (port 6543). Same dialect,
+   project, using its **Transaction pooler** connection string (port 6543). Same dialect,
    same schema, no code change.
 2. **Images** — generated images are written to `public/uploads`, which is not
    writable. Pollinations falls back to hotlinking its own URL automatically.

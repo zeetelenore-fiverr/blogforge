@@ -62,7 +62,10 @@ export async function generateMetadata(): Promise<Metadata> {
         ...(s['verify.pinterest'] ? { 'p:domain_verify': s['verify.pinterest'] } : {}),
       },
     },
-    icons: s['site.faviconUrl'] ? { icon: s['site.faviconUrl'] } : undefined,
+    // Always emit an icon link. Without one the browser falls back to
+    // /favicon.ico, which does not exist, so every page load logged a 404 and a
+    // fresh install showed a blank tab. Operators override it in Settings.
+    icons: { icon: s['site.faviconUrl'] || '/icon.svg' },
   };
 }
 
