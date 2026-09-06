@@ -1,0 +1,41 @@
+# Firebase App Hosting configuration.
+#
+# App Hosting builds this repo and runs it on Cloud Run: one long-lived Node
+# process rather than a function per request. That is the same shape as
+# `npm start`, which is how BlogForge is developed and tested.
+#
+# Secrets live in Google Secret Manager, not here. Create them once with:
+#   firebase apphosting:secrets:set DATABASE_URL
+#   firebase apphosting:secrets:set APP_SECRET
+#   firebase apphosting:secrets:set CRON_SECRET
+
+runConfig:
+  # A blog is read-mostly and cheap to serve; one CPU is plenty.
+  cpu: 1
+  memoryMiB: 512
+  concurrency: 80
+  minInstances: 0
+  maxInstances: 2
+
+env:
+  # Public site URL. Update after the first deploy tells you the hostname —
+  # canonical tags, the sitemap and IndexNow all derive from it.
+  - variable: SITE_URL
+    value: https://REPLACE-ME.web.app
+    availability:
+      - RUNTIME
+
+  - variable: DATABASE_URL
+    secret: DATABASE_URL
+    availability:
+      - RUNTIME
+
+  - variable: APP_SECRET
+    secret: APP_SECRET
+    availability:
+      - RUNTIME
+
+  - variable: CRON_SECRET
+    secret: CRON_SECRET
+    availability:
+      - RUNTIME
