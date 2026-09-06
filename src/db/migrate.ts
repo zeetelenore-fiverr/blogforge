@@ -87,6 +87,20 @@ async function builtVersion(run: Executor): Promise<string | null> {
 }
 
 /**
+ * Whether the tables are physically present, checked on the last one the DDL
+ * creates. A database can be fully built yet carry no version stamp: if an
+ * earlier build timed out before committing, the DDL is rolled back with it —
+ * except it is not, because CREATE TABLE IF NOT EXISTS had already been
+ * committed by a previous partial run. Without this probe every request
+ * re-ran the entire DDL, which under a saturated connection pool meant the
+ * build could never finish and the stamp could never be written.
+ */
+async function schemaPresent(run: Executor): Promise<boolean> {
+  const probe = await run.execute(sql`SELECT to_regclass('public.media') AS present`);
+  return Boolean(firstRow<{ present: string | null }>(probe)?.present);
+}
+
+/**
  * Build the schema at most once across every process sharing this database.
  *
  * Two things went wrong before this, both only visible on a real serverless
@@ -126,7 +140,13 @@ export async function ensureSchema(): Promise<void> {
         // Whoever queued behind the winner arrives here after it committed.
         if ((await builtVersion(tx)) === SCHEMA_VERSION) return;
 
-        for (const statement of [...statements(SCHEMA_SQL), ...statements(ADDED_COLUMNS)]) {
+        // ADDED_COLUMNS still runs either way: it is three idempotent ALTERs and
+        // it is how an older database gains newer columns.
+        const script = (await schemaPresent(tx))
+          ? statements(ADDED_COLUMNS)
+          : [...statements(SCHEMA_SQL), ...statements(ADDED_COLUMNS)];
+
+        for (const statement of script) {
           await tx.execute(sql.raw(statement));
         }
 
