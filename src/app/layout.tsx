@@ -1,25 +1,13 @@
 import type { Metadata, Viewport } from 'next';
-import { Libre_Bodoni, Public_Sans } from 'next/font/google';
 import './globals.css';
 import { getSettings, isOn } from '@/lib/settings';
 
-// Editorial pairing: a Bodoni for display, a neutral grotesque for reading.
-// Self-hosted by next/font, so there is no render-blocking request and no CLS.
-const display = Libre_Bodoni({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-libre-bodoni',
-  display: 'swap',
-  fallback: ['Iowan Old Style', 'Georgia', 'serif'],
-});
-
-const body = Public_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-public-sans',
-  display: 'swap',
-  fallback: ['system-ui', 'Segoe UI', 'sans-serif'],
-});
+// Font families come from globals.css rather than next/font. next/font is the
+// nicer default -- self-hosted, no render-blocking request, no layout shift --
+// but it is the one thing every page loads and no route handler touches, and on
+// Vercel every page was timing out while route handlers served fine. Keeping the
+// stack in CSS removes that variable; the editorial pairing degrades to the
+// closest system faces.
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSettings();
@@ -84,7 +72,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang={s['site.language'] || 'en'}
-      className={`${display.variable} ${body.variable}`}
       suppressHydrationWarning
     >
       <body
