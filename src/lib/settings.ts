@@ -111,12 +111,36 @@ export type SettingsMap = Record<SettingKey, string> & Record<string, string>;
 const cache = globalThis as unknown as { __bf_settings?: SettingsMap; __bf_settings_at?: number };
 const TTL = 5_000;
 
+async function withDeadline<T>(work: Promise<T>, ms: number, fallback: T): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => resolve(fallback), ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export async function getSettings(force = false): Promise<SettingsMap> {
   if (!force && cache.__bf_settings && Date.now() - (cache.__bf_settings_at || 0) < TTL) {
     return cache.__bf_settings;
   }
-  await dbReady();
-  const rows = await db.select().from(settings);
+  // Bounded, because this runs in layouts on every page: an unbounded read
+  // here is a single point of failure for the whole site. Ten seconds is far
+  // beyond the ~1.8s a healthy read takes, so a trip through the fallback means
+  // something is genuinely wrong rather than merely slow.
+  const rows = await withDeadline(
+    (async () => {
+      await dbReady();
+      return db.select().from(settings);
+    })(),
+    10_000,
+    [] as Array<{ key: string; value: string }>,
+  );
   const map = { ...DEFAULT_SETTINGS } as SettingsMap;
   for (const r of rows) if (r.value !== '') (map as Record<string, string>)[r.key] = r.value;
   cache.__bf_settings = map;
