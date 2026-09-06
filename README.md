@@ -265,7 +265,9 @@ the job queue.
 GET /api/cron/tick?secret=$CRON_SECRET
 ```
 
-`vercel.json` already declares an hourly cron. Any free cron service
+`vercel.json` declares a once-daily cron, because Vercel's Hobby plan rejects
+anything more frequent and the deployment fails if you ask for it. On Pro you can
+raise it. For more frequent runs on a free account, any cron service
 (cron-job.org, GitHub Actions, UptimeRobot) works just as well. Authorization can
 be a `Bearer` header or the `?secret=` query parameter.
 

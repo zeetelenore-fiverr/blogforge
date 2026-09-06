@@ -193,10 +193,12 @@ automatically.
 ## Step 9 — Turn on the scheduler
 
 Vercel needs to be told to wake the site up on a schedule. The repository
-already includes `vercel.json`, which asks for an hourly run.
+already includes `vercel.json`, which asks for one run a day.
 
-On Vercel's free Hobby plan, cron jobs run **once per day** and the exact time is
-chosen by Vercel. That is enough for one-article-a-day publishing.
+**It has to be daily.** Vercel's free Hobby plan permits only once-per-day cron
+schedules and *fails the whole deployment* if the file asks for more — so leave
+this alone unless you are on Pro. One run a day is enough for
+one-article-a-day publishing.
 
 **To check it is working:** Vercel project → **Settings → Cron Jobs**. You should
 see `/api/cron/tick` listed.
