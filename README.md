@@ -5,7 +5,7 @@ keywords, write SEO articles, generate the images, publish on a schedule, screen
 against AdSense policy, and repair your own indexing problems — on your own
 Vercel account, with your own database, using your own free API keys.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FOWNER%2FREPO&project-name=blogforge&repository-name=blogforge&env=APP_SECRET,DATABASE_URL,CRON_SECRET&envDescription=APP_SECRET%20and%20CRON_SECRET%20are%20long%20random%20strings.%20DATABASE_URL%20is%20your%20Supabase%20pooled%20connection%20string.&envLink=https%3A%2F%2Fgithub.com%2FOWNER%2FREPO%2Fblob%2Fmain%2FINSTALL.md)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzeetelenore-fiverr%2Fblogforge&project-name=blogforge&repository-name=blogforge&env=APP_SECRET,DATABASE_URL,CRON_SECRET&envDescription=APP_SECRET%20and%20CRON_SECRET%20are%20long%20random%20strings.%20DATABASE_URL%20is%20your%20Supabase%20pooled%20connection%20string.&envLink=https%3A%2F%2Fgithub.com%2Fzeetelenore-fiverr%2Fblogforge%2Fblob%2Fmain%2FINSTALL.md)
 &nbsp;
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black)

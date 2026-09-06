@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Installation help
-    url: https://github.com/OWNER/REPO/blob/main/START-HERE.md
+    url: https://github.com/zeetelenore-fiverr/blogforge/blob/main/START-HERE.md
     about: The plain-English setup guide — most setup questions are answered there.

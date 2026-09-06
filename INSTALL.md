@@ -1,6 +1,6 @@
 # Installing BlogForge on Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FOWNER%2FREPO&project-name=blogforge&repository-name=blogforge&env=APP_SECRET,DATABASE_URL,CRON_SECRET&envDescription=APP_SECRET%20and%20CRON_SECRET%20are%20long%20random%20strings.%20DATABASE_URL%20is%20your%20Supabase%20pooled%20connection%20string.&envLink=https%3A%2F%2Fgithub.com%2FOWNER%2FREPO%2Fblob%2Fmain%2FINSTALL.md)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzeetelenore-fiverr%2Fblogforge&project-name=blogforge&repository-name=blogforge&env=APP_SECRET,DATABASE_URL,CRON_SECRET&envDescription=APP_SECRET%20and%20CRON_SECRET%20are%20long%20random%20strings.%20DATABASE_URL%20is%20your%20Supabase%20pooled%20connection%20string.&envLink=https%3A%2F%2Fgithub.com%2Fzeetelenore-fiverr%2Fblogforge%2Fblob%2Fmain%2FINSTALL.md)
 
 The button above does Steps 1 and 4 in one go — it forks the repository into
 your GitHub account and asks for the three environment variables. You still need
