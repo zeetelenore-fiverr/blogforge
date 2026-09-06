@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { getSettings, isOn } from '@/lib/settings';
+import { getSettingsForRender, isOn } from '@/lib/settings';
 
 // Font families come from globals.css rather than next/font. next/font is the
 // nicer default -- self-hosted, no render-blocking request, no layout shift --
@@ -10,7 +10,7 @@ import { getSettings, isOn } from '@/lib/settings';
 // closest system faces.
 
 export async function generateMetadata(): Promise<Metadata> {
-  const s = await getSettings();
+  const s = await getSettingsForRender();
   const base = (s['site.url'] || 'http://localhost:3000').replace(/\/+$/, '');
 
   return {
@@ -68,7 +68,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const s = await getSettings();
+  const s = await getSettingsForRender();
   return (
     <html
       lang={s['site.language'] || 'en'}

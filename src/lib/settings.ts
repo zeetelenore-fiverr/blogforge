@@ -156,3 +156,28 @@ export async function absoluteUrl(path: string): Promise<string> {
   const base = await siteUrl();
   return `${base}${path.startsWith('/') ? path : `/${path}`}`;
 }
+
+/**
+ * Settings for render paths that must not be able to hang.
+ *
+ * A layout runs on every single page, so anything it awaits is a single point
+ * of failure for the whole site: on Vercel a stalled settings read took every
+ * page to a 300-second timeout while route handlers doing the same query
+ * answered in under two seconds. Falling back to the defaults renders a
+ * slightly generic page, which is strictly better than rendering nothing.
+ */
+export async function getSettingsForRender(): Promise<SettingsMap> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      getSettings(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('settings read timed out')), 5_000);
+      }),
+    ]);
+  } catch {
+    return { ...DEFAULT_SETTINGS } as SettingsMap;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
